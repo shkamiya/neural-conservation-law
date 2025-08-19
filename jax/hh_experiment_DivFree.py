@@ -42,8 +42,13 @@ mlp = MLP(depth=layers,width=width,act=act,out_dim=dim*(dim-1)//2,std=1,bias=Tru
 key, mkey = random.split(key,2)
 params = mlp.init(mkey,x[1:])
 scale = 1.4
-params = jax.tree_map(lambda x: x*scale, params)
-params = params.unfreeze()['params']
+params = jax.tree_util.tree_map(lambda x: x*scale, params)
+
+# 新しいFlaxでは既に辞書形式なので、unfreeze()は不要
+if hasattr(params, 'unfreeze'):
+    params = params.unfreeze()['params']
+else:
+    params = params['params'] if 'params' in params else params
 
 func_mlp = lambda x,params: mlp.apply({'params':params}, x)
 

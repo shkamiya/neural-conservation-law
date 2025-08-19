@@ -63,7 +63,11 @@ def runHelmholtzExperiment(params, key, model, apx, opt, dim, eps=1e3,load_path=
     scale = 1.5
     params3 = mlp3.init(key,x[1:])
     params3 = jax.tree_map(lambda x: x*scale, params3)
-    params3 = params3.unfreeze()['params']
+    # 新しいFlaxでは既に辞書形式なので、unfreeze()は不要
+    if hasattr(params3, 'unfreeze'):
+        params3 = params3.unfreeze()['params']
+    else:
+        params3 = params3['params'] if 'params' in params3 else params3
     potential = lambda x: grad(lambda x: mlp3.apply({'params':params3}, x)[0])(x[1:])
     
     
@@ -77,7 +81,11 @@ def runHelmholtzExperiment(params, key, model, apx, opt, dim, eps=1e3,load_path=
     #scales parameters to adjust behavior
     scale = 1.2
     params2 = jax.tree_map(lambda x: x*scale, params2)
-    params2 = params2.unfreeze()['params']
+    # 新しいFlaxでは既に辞書形式なので、unfreeze()は不要
+    if hasattr(params2, 'unfreeze'):
+        params2 = params2.unfreeze()['params']
+    else:
+        params2 = params2['params'] if 'params' in params2 else params2
     func_mlp2 = lambda x,params: mlp2.apply({'params':params}, x)
     #divfree_targ = lambda x: mlp2.apply({'params':params2}, x[1:])
 
@@ -143,7 +151,11 @@ def runHelmholtzExperiment2(params, key, model, apx, opt, dim, eps=1e3,load_path
     #scales parameters to adjust behavior
     scale = 1.5
     params2 = jax.tree_map(lambda x: x*scale, params2)
-    params2 = params2.unfreeze()['params']
+    # 新しいFlaxでは既に辞書形式なので、unfreeze()は不要
+    if hasattr(params2, 'unfreeze'):
+        params2 = params2.unfreeze()['params']
+    else:
+        params2 = params2['params'] if 'params' in params2 else params2
     func_mlp2 = lambda x,params: mlp2.apply({'params':params}, x)
     targ = lambda x: mlp2.apply({'params':params2}, x[1:])
 
@@ -209,7 +221,11 @@ def runHelmholtzExperiment3(params, key, model, apx, opt, dim, eps=1e3,load_path
     #scales parameters to adjust behavior
     scale = 1.1
     params2 = jax.tree_map(lambda x: x*scale, params2)
-    params2 = params2.unfreeze()['params']
+    # 新しいFlaxでは既に辞書形式なので、unfreeze()は不要
+    if hasattr(params2, 'unfreeze'):
+        params2 = params2.unfreeze()['params']
+    else:
+        params2 = params2['params'] if 'params' in params2 else params2
     func_mlp2 = lambda x,params: mlp2.apply({'params':params}, periodic(x))
     #divfree_targ = lambda x: mlp2.apply({'params':params2}, x[1:])
 
